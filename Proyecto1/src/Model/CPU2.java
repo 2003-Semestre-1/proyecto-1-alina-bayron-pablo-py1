@@ -60,7 +60,6 @@ public class CPU2 {
         return cpuOcupado;
     }
     public static void finalizar(){
-        t1 = bpc.getTiempoInicio();
         t2 = new Date();
         bpc.setTiempoFinal(t2);
         diff = t2.getTime() - t1.getTime() + 1;

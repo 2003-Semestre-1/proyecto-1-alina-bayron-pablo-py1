@@ -63,7 +63,6 @@ public class CPU {
     public static void finalizar(){
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         String TFinal;
-        t1 = bpc.getTiempoInicio();
         t2 = new Date();
         TFinal = format.format(2);
         bpc.setTiempoFinal(t2);

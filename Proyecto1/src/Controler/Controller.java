@@ -62,6 +62,7 @@ public class Controller {
     }
     
     public static void cargarBpcs(){
+        hayProcesos=true;
         bpcActual = getNextBPC();
         if (!CPU.cpuOcupado()){
             if (bpcActual != null){
