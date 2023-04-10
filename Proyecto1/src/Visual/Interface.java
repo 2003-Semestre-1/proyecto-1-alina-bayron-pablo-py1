@@ -137,6 +137,8 @@ public class Interface extends javax.swing.JFrame {
                             btn_pass_to_pass.setEnabled(true);
                             enviarTexto(num, cpu);
                             txt_pantalla.setText("");
+                            txt_pantalla.setEditable(false);
+                            btn_automatic.setEnabled(true);
                         } else {
                             // Invalid number, show an error message or take other action
                             JOptionPane.showMessageDialog(null, "Solo se aceptan números enteros entre 0 y 255: ", "Error", JOptionPane.ERROR_MESSAGE);
@@ -186,6 +188,7 @@ public class Interface extends javax.swing.JFrame {
             }
         }
         btn_config.setEnabled(true);
+        txt_pantalla.setText("");
     }
     public static void limpiarTablaProcesos(){
         for (int i = 0; i < 50; i++) {

@@ -298,5 +298,7 @@ public class Controller {
         Interface.limpiarDatosInterfaceCpu(1);
         Interface.eliminarDatosTablaTiempos();
         Interface.limpiarTablaProcesos();
+        CPU.finalizar();
+        CPU2.finalizar();
     }
 }
