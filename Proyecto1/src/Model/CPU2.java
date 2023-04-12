@@ -212,6 +212,7 @@ public class CPU2 {
         if (totalInstrucciones <= instruccionActual){
             finalizar();
         }
+        bpc.setTotalPeso(pesoTotal);
         Controller.actualizarRegistrosCPU(bpc, 2);
         instruccionActual ++;
     }
@@ -395,6 +396,7 @@ public static void mov_valor_a_destino(int valor, String destino) {
     }
 
     public static void INT_09H() {
+        System.out.println("en cpu 2 envia: " + bpc.getCPU());
         Controller.solicitarEntradaTexto(bpc.getCPU());
     }
     

@@ -19,7 +19,7 @@ public class BPC {
     private int CX;
     private int DX;
     // Contador del programa (ubicación del programa cargado en memoria)
-    private int direccionMemoria;
+    private long direccionMemoria;
     //Información de la pila: definir tamaño de 10, y tomar en cuenta error de desbordamiento
     Stack pila = new Stack();
     // Información contable; el cpu donde se está ejecutando, tiempo de inicio, tiempo empleado.
@@ -34,7 +34,7 @@ public class BPC {
     // Enlace al siguiente BPC
     private int siguienteBPC;
     // Dirección de inicio (BASE)
-    private long direccionInicio;
+    private int direccionInicio;
     // Tamaño proceso
     private int TamanioProceso;
     // Prioridad

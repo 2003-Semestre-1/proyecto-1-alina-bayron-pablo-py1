@@ -10,8 +10,6 @@ import Visual.InterfaceMensajes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,11 +21,6 @@ import javax.swing.JFileChooser;
  */
 public class Controller {
     
-    Interface interfaz;
-    Reader reader;
-    Memory memoria;
-    static CPU cpu1;
-    static CPU2 cpu2;
     static int procesoNumeroCPU1 = 0;
     static int procesoNumeroCPU2 = 0;
     static int timeCPU1 = 0;
@@ -41,9 +34,6 @@ public class Controller {
    
     
     public Controller(Interface interfaz, Reader reader, Memory memoria, CPU cpu1, CPU cpu2){
-        this.interfaz = interfaz;
-        this.reader = reader;
-        this.memoria = memoria;
     }
     
     
@@ -64,6 +54,7 @@ public class Controller {
     public static void cargarBpcs(){
         hayProcesos=true;
         bpcActual = getNextBPC();
+        System.out.println(bpcActual == null);
         if (!CPU.cpuOcupado()){
             if (bpcActual != null){
                 CPU.cargarBCP(bpcActual);
@@ -78,7 +69,7 @@ public class Controller {
         if (!CPU2.cpuOcupado()){
             if (bpcActual != null){
                 CPU2.cargarBCP(bpcActual);
-                Interface.limpiarDatosInterfaceCpu(1);
+                Interface.limpiarDatosInterfaceCpu(2);
                 Memory.eliminarProcesoColaEspera(bpcActual.getNombre());
                 bpcActual.setCPU(2);
                 bpcActual.setEstado("Preparado");
@@ -179,9 +170,11 @@ public class Controller {
     
     public static BPC getNextBPC(){
         if (Memory.hayBcpPendientes()){
+            System.out.println("entro al if de getNextBpc");
             BPC bpc = Memory.getNetxBPC();
             return bpc;
         }else{
+            System.out.println("entro al else de getNextBpc");
             return null;
         }
     }
@@ -191,7 +184,8 @@ public class Controller {
     }
     
     public static void solicitarEntradaTexto(int CPU){
-        int entrada = Interface.entradaTexto(CPU);
+        System.out.println("el cpu en controler es: " + CPU);
+        Interface.entradaTexto(CPU, false);
     }
     
     public static void enviarTexto(int num, int cpu){
@@ -219,8 +213,11 @@ public class Controller {
         Date d1 = null;
         Date d2 = null;
         ArrayList<BPC> bpcs = Memory.getListaBPCS();
+        for(int i = 0; i<bpcs.size(); i++){
+            System.out.println(i);
+        }
         String mensaje = "";
-        if (bpcs.size() == 0){
+        if (bpcs.isEmpty()){
             mensaje = "No hay BCPS para mostrar";
         }else{
             for(int i = 0; i<bpcs.size(); i++){
@@ -228,7 +225,7 @@ public class Controller {
                 String inicio = "";
                 String fin = "Aún no termina de ejecutar";
                 String total = "Aún no termina de ejecutar";
-                if (bpc.getEstado() != "Nuevo" && bpc.getEstado() != "Preparado" && bpc.getEstado() != null ){
+                if (!"Nuevo".equals(bpc.getEstado()) && !"Preparado".equals(bpc.getEstado()) && bpc.getEstado() != null ){
                     if (bpc.getTiempoInicio() != null){
                         d1 = bpc.getTiempoInicio();
                         inicio = format.format(d1);
@@ -294,12 +291,16 @@ public class Controller {
     }
     
     public static void limpiar(){
+        procesoNumeroCPU1 = 0;
+        procesoNumeroCPU2 = 0;
+        timeCPU1 = 0;
+        timeCPU2 = 0;
         Memory.limpiar();
-        Interface.limpiarDatosInterfaceCpu(2);
-        Interface.limpiarDatosInterfaceCpu(1);
         Interface.eliminarDatosTablaTiempos();
         Interface.limpiarTablaProcesos();
         CPU.finalizar();
         CPU2.finalizar();
+        Interface.limpiarDatosInterfaceCpu(2);
+        Interface.limpiarDatosInterfaceCpu(1);
     }
 }

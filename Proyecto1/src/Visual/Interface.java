@@ -23,6 +23,7 @@ import java.util.logging.Logger;
  */
 public class Interface extends javax.swing.JFrame {
     static int num;
+    static int solicitante;
     static boolean flag = false;
     
     public Interface(){
@@ -30,6 +31,8 @@ public class Interface extends javax.swing.JFrame {
         this.getContentPane().setBackground(new Color(225, 255, 255));
         this.setLocationRelativeTo(null);
         txt_pantalla.setHorizontalAlignment(txt_pantalla.CENTER);
+        txt_pantalla.setText("");
+        txt_pantalla.setEditable(false);
     }
     
     public static void fillProcessTable(ArrayList<BPC> procesos){
@@ -59,9 +62,9 @@ public class Interface extends javax.swing.JFrame {
             BX_1.setText(String.valueOf(0));
             CX_1.setText(String.valueOf(0));
             DX_1.setText(String.valueOf(0));
-            txt_tiempoInicial1.setText("");
-            txt_tiempoFinal1.setText("");
-            txt_tiempoTotal1.setText("");
+            txt_tiempoInicial1.setText(" ");
+            txt_tiempoFinal1.setText(" ");
+            txt_tiempoTotal1.setText(" ");
         }else{
             for (int i = 0; i < 49; i++) {
                 table_CPU2.setValueAt(i+1, i, 0);
@@ -117,8 +120,14 @@ public class Interface extends javax.swing.JFrame {
         }
     }
     
-    public static int entradaTexto(int cpu){
-        JOptionPane.showMessageDialog(null, "¡Atención! Se ha solicitado una entrada de texto del CPU " + cpu + ".", "Aviso", JOptionPane.WARNING_MESSAGE);
+    public static int entradaTexto(int cpu, boolean bandera){
+        System.out.println("el cpu en interfaz es: " + cpu);
+        solicitante= cpu;
+        if (!bandera){
+            JOptionPane.showMessageDialog(null, "¡Atención! Se ha solicitado una entrada de texto del CPU " + solicitante + ".", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
+        System.out.println(" en entrada de texto cpu es : " + cpu);
+        
         txt_pantalla.setText("");
         txt_pantalla.setEditable(true);
         btn_automatic.setEnabled(false);
@@ -128,32 +137,31 @@ public class Interface extends javax.swing.JFrame {
         txt_pantalla.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                System.out.println(" antes de verificar el enter cpu es : " + solicitante);
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    try {
-                        num = Integer.parseInt(txt_pantalla.getText());
-                        if (num >= 0 && num <= 255) {
-                            txt_pantalla.setEditable(false);
-                            btn_automatic.setEnabled(true);
-                            btn_pass_to_pass.setEnabled(true);
-                            enviarTexto(num, cpu);
-                            txt_pantalla.setText("");
-                            txt_pantalla.setEditable(false);
-                            btn_automatic.setEnabled(true);
-                        } else {
-                            // Invalid number, show an error message or take other action
-                            JOptionPane.showMessageDialog(null, "Solo se aceptan números enteros entre 0 y 255: ", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (NumberFormatException ex) {
+                    num = Integer.parseInt(txt_pantalla.getText());
+                    if (num >= 0 && num <= 255) {
+                        txt_pantalla.setEditable(false);
+                        btn_automatic.setEnabled(true);
+                        btn_pass_to_pass.setEnabled(true);
+                        enviarTexto(num);
+                        txt_pantalla.setText("");
+                        txt_pantalla.setEditable(false);
+                        btn_automatic.setEnabled(true);
+                    } else {
+                        // Invalid number, show an error message or take other action
                         JOptionPane.showMessageDialog(null, "Solo se aceptan números enteros entre 0 y 255: ", "Error", JOptionPane.ERROR_MESSAGE);
-                    } 
+                        entradaTexto(solicitante, true);
+                    }
                 }
             }
         });
         return num;   
     }
     
-    public static void enviarTexto(int num, int cpu){
-        Controller.enviarTexto(num, cpu);
+    public static void enviarTexto(int num){
+        System.out.println(num + "en enviar texto cpu es: " + solicitante);
+        Controller.enviarTexto(num, solicitante);
     }
     public static void imprimerEnPantalla(int DX, int cpu){
         JOptionPane.showMessageDialog(null, "¡Atención! Se imprimio el regstro DX por el cpu" + cpu + ".", "Aviso", JOptionPane.WARNING_MESSAGE);
