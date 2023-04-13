@@ -220,6 +220,9 @@ public class BPC {
         TamanioProceso = pTamanio;
     }
     
+    public int getDireccionMemoria2 (){
+        return direccionInicio;
+    }
     
 }
 

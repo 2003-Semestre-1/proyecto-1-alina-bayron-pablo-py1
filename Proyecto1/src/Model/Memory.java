@@ -15,7 +15,7 @@ public class Memory {
     static float tamanioUnidadReserva = 512;
     static float tamanioPrincipalReserva = 256;
     static float tamanioVirtualReserva = 64;
-    static ArrayList<String> colaEspera = new ArrayList<>();
+    static ArrayList<BPC> colaEspera = new ArrayList<>();
     static ArrayList<BPC> memoriaPrincipal = new ArrayList<>();
     static ArrayList<BPC> memoriaVirtual = new ArrayList<>();
     static ArrayList<ArrayList> UnidadAlmacenamiento = new ArrayList<>();
@@ -38,15 +38,15 @@ public class Memory {
     
     public static void guardarBPC(BPC pBpc){
         int tamanioCodASM = pBpc.getCodAsm().size();
-        double tamanioSuponisionPrincipal = 0.488 + (tamanioCodASM / 1024.0);
-        double tamanioSuponisionVirtual = 0.488 + (tamanioCodASM / 1024.0);
+        double tamanioSuponisionPrincipal = 0.808 + (tamanioCodASM / 1024.0);
+        double tamanioSuponisionVirtual = 0.808 + (tamanioCodASM / 1024.0);
         if ((tamanioPrincipal - tamanioSuponisionPrincipal) >= 0 || (tamanioVirtual - tamanioSuponisionVirtual) >= 0){
             ArrayList<Object> datosBpc = new ArrayList();
             datosBpc.add(pBpc.getDireccionMemoria());
             datosBpc.add(pBpc.getNombre());
             datosBpc.add(pBpc.getDireccionMemoria());
             datosBpc.add(pBpc.getCodAsm());
-            if ((tamanioPrincipal - (0.488 + (tamanioCodASM / 1024.0) )) > 0 ){
+            if ((tamanioPrincipal - (0.808 + (tamanioCodASM / 1024.0) )) > 0 ){
                 System.out.println(pBpc.getNombre()+"se guardo en principal");
                 UnidadAlmacenamiento.add(datosBpc);
                 memoriaPrincipal.add(pBpc);
@@ -57,12 +57,10 @@ public class Memory {
                 memoriaVirtual.add(pBpc);
                 disminuirTamanioUnidad(tamanioCodASM, 2);
             }
+            colaEspera.add(pBpc);
         } else {
             JOptionPane.showMessageDialog(null, "No hay suficiente memoria principal y virtual para cargar el BCP", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        
-            
-           
+        }         
     }
     
     public static BPC getNetxBPC(){
@@ -86,7 +84,7 @@ public class Memory {
     }
     
     public static ArrayList getListaBPCS(){
-        ArrayList<BPC> listBpc = new ArrayList();
+        /*ArrayList<BPC> listBpc = new ArrayList();
         System.out.println("1- Numero bcp = " + listBpc.size());
         if (memoriaVirtual.isEmpty()) {
             return memoriaPrincipal ;
@@ -101,27 +99,28 @@ public class Memory {
             }
             System.out.println("5- Numero bpc luego del for = " + listBpc.size());
             return listBpc;
-        }
+        }*/
+        return colaEspera;
         
     }
-    
-    public static void agregarAColaEspera(String proceso){
-        colaEspera.add(proceso);
-    }
-    
-    public static void eliminarProcesoColaEspera(String proceso){
-        colaEspera.remove(proceso);
-    }
-    
+        
     public static void disminuirTamanioUnidad(int tamanioCodASM, int memoria){
         
         if (memoria == 1){
-            tamanioPrincipal -= 0.488 + (tamanioCodASM / 1024.0);//lista de archivos bcp
+            tamanioPrincipal -= 0.808 + (tamanioCodASM / 1024.0);//lista de archivos bcp
         }else{
-            tamanioVirtual -= 0.488 + (tamanioCodASM / 1024.0);//lista de archivos bcp
+            tamanioVirtual -= 0.808 + (tamanioCodASM / 1024.0);//lista de archivos bcp
         }
         
         tamanioUnidad -= 0.100 + (tamanioCodASM / 1024.0);
+    }
+    
+    public static void aumentarTamanioUnidad(int tamanioCodASM, int memoria){
+        if (memoria == 1){
+            tamanioPrincipal += 0.808 + (tamanioCodASM / 1024.0);//lista de archivos bcp
+        }else{
+            tamanioVirtual += 0.808 + (tamanioCodASM / 1024.0);//lista de archivos bcp
+        }        
     }
     
     public static void limpiar(){
@@ -135,5 +134,16 @@ public class Memory {
         tamanioPrincipal = tamanioPrincipalReserva;
         tamanioVirtual = tamanioVirtualReserva;
         tamanioUnidad = tamanioUnidadReserva;
+    }
+    
+    public static void eliminarBPC (BPC objeto){
+        aumentarTamanioUnidad(objeto.getCodAsm().size(),1);
+        memoriaPrincipal.remove(objeto.getDireccionMemoria2());
+        if (!memoriaVirtual.isEmpty()){
+            BPC bpc = memoriaVirtual.get(0);
+            memoriaPrincipal.add(bpc);
+            aumentarTamanioUnidad(bpc.getCodAsm().size(),2);
+            disminuirTamanioUnidad(bpc.getCodAsm().size(),1);
+        }
     }
 }

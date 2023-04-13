@@ -73,6 +73,7 @@ public class CPU {
         bpc.setTotalPeso(pesoTotal);
         Controller.agregarTimpos(bpc, 1);
         setCpuOcupado(false);
+        Memory.eliminarBPC(bpc);
     }
     
     public static void executeLine() {

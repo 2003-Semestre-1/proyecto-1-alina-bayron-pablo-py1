@@ -31,6 +31,8 @@ public class Controller {
     static boolean hayProcesos = true;
     static boolean modoAutomatico = false;
     
+    static boolean interrumpir = false;
+    
    
     
     public Controller(Interface interfaz, Reader reader, Memory memoria, CPU cpu1, CPU cpu2){
@@ -59,7 +61,6 @@ public class Controller {
             if (bpcActual != null){
                 CPU.cargarBCP(bpcActual);
                 Interface.limpiarDatosInterfaceCpu(1);
-                Memory.eliminarProcesoColaEspera(bpcActual.getNombre());
                 bpcActual.setCPU(1);
                 bpcActual.setEstado("Preparado");
                 marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU1, 0, 1 );
@@ -70,7 +71,6 @@ public class Controller {
             if (bpcActual != null){
                 CPU2.cargarBCP(bpcActual);
                 Interface.limpiarDatosInterfaceCpu(2);
-                Memory.eliminarProcesoColaEspera(bpcActual.getNombre());
                 bpcActual.setCPU(2);
                 bpcActual.setEstado("Preparado");
                 marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU2, 0, 2 );
@@ -81,15 +81,21 @@ public class Controller {
     }
 
     public static void ejecutarSiguienteInstruccion(){
+        System.out.println("CP1: " + CPU.cpuOcupado());
+        System.out.println("CP2: " + CPU2.cpuOcupado());
+        System.out.println(bpcActual == null);
+
         if (bpcActual == null && !CPU.cpuOcupado() && !CPU2.cpuOcupado() ){
+            System.out.println("Entro al 1 if");
             hayProcesos = false;
             Interface.noHayProcesos(3);
+            
         }else{
+            System.out.println("Entro al 1 else");
             if (!CPU.cpuOcupado()){
                 if (bpcActual != null){
                     procesoNumeroCPU1 ++;
                     Interface.limpiarDatosInterfaceCpu(1);
-                    Memory.eliminarProcesoColaEspera(bpcActual.getNombre());
                     bpcActual.setCPU(1);
                     CPU.cargarBCP(bpcActual);
                     CPU.executeLine();
@@ -114,7 +120,6 @@ public class Controller {
                 if (bpcActual != null){
                     procesoNumeroCPU2 ++;
                     Interface.limpiarDatosInterfaceCpu(2);
-                    Memory.eliminarProcesoColaEspera(bpcActual.getNombre());
                     bpcActual.setCPU(2);
                     CPU2.cargarBCP(bpcActual);
                     CPU2.executeLine();
@@ -141,18 +146,21 @@ public class Controller {
     
     public static void resolverAutomatico() throws InterruptedException{
         modoAutomatico = true;
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService automatico = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
             ejecutarSiguienteInstruccion();
             if (!hayProcesos){
-                scheduler.shutdown();
+                automatico.shutdown();
+            } else if (interrumpir){
+                automatico.shutdown();
+                interrumpir = false;
             }
         };
 
         int initialDelay = 0; // Demora inicial antes de ejecutar la tarea por primera vez
         int period = 1; // Intervalo entre ejecuciones consecutivas en segundos
 
-        scheduler.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
+        automatico.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
     }
     public static void actualizarRegistrosCPU(BPC bpc, int cpu){
         if (cpu == 1){
@@ -164,7 +172,6 @@ public class Controller {
   
     public static void newBPC(String nombre, ArrayList<String> linesAsm, int posicionMemoria){
         BPC bpc = new BPC(nombre,linesAsm,posicionMemoria);
-        Memory.agregarAColaEspera(bpc.getNombre());
         Memory.guardarBPC(bpc);
     }
     
@@ -185,7 +192,9 @@ public class Controller {
     
     public static void solicitarEntradaTexto(int CPU){
         System.out.println("el cpu en controler es: " + CPU);
-        Interface.entradaTexto(CPU, false);
+        Interface.entradaTexto(CPU, false, interrumpir);
+        interrumpir = true;
+        
     }
     
     public static void enviarTexto(int num, int cpu){

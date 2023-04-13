@@ -2,6 +2,7 @@
 package Model;
 import Controler.Controller;
 import Model.BPC;
+import static Model.CPU.bpc;
 import static Model.CPU.pesoTotal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,6 +70,7 @@ public class CPU2 {
         bpc.setTotalPeso(pesoTotal);
         Controller.agregarTimpos(bpc, 2);
         setCpuOcupado(false);
+        Memory.eliminarBPC(bpc);
    }
     
     public static void executeLine() {

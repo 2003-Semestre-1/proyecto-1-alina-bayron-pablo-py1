@@ -120,7 +120,7 @@ public class Interface extends javax.swing.JFrame {
         }
     }
     
-    public static int entradaTexto(int cpu, boolean bandera){
+    public static int entradaTexto(int cpu, boolean bandera, boolean interrumpir){
         System.out.println("el cpu en interfaz es: " + cpu);
         solicitante= cpu;
         if (!bandera){
@@ -144,14 +144,14 @@ public class Interface extends javax.swing.JFrame {
                         txt_pantalla.setEditable(false);
                         btn_automatic.setEnabled(true);
                         btn_pass_to_pass.setEnabled(true);
-                        enviarTexto(num);
+                        enviarTexto(num, interrumpir);
                         txt_pantalla.setText("");
                         txt_pantalla.setEditable(false);
                         btn_automatic.setEnabled(true);
                     } else {
                         // Invalid number, show an error message or take other action
                         JOptionPane.showMessageDialog(null, "Solo se aceptan números enteros entre 0 y 255: ", "Error", JOptionPane.ERROR_MESSAGE);
-                        entradaTexto(solicitante, true);
+                        entradaTexto(solicitante, true, interrumpir);
                     }
                 }
             }
@@ -159,9 +159,17 @@ public class Interface extends javax.swing.JFrame {
         return num;   
     }
     
-    public static void enviarTexto(int num){
+    public static void enviarTexto(int num, boolean interrumpir){
         System.out.println(num + "en enviar texto cpu es: " + solicitante);
         Controller.enviarTexto(num, solicitante);
+        if (!interrumpir) {
+            try {
+                Controller.resolverAutomatico();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.print(interrumpir);
     }
     public static void imprimerEnPantalla(int DX, int cpu){
         JOptionPane.showMessageDialog(null, "¡Atención! Se imprimio el regstro DX por el cpu" + cpu + ".", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -172,7 +180,7 @@ public class Interface extends javax.swing.JFrame {
         if (num == 3){
             JOptionPane.showMessageDialog(null, "¡Atención! No hay procesos para ejecutar.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }
-        if (num == 1){
+        else if (num == 1){
             JOptionPane.showMessageDialog(null, "¡Atención! No hay procesos para asignar al CPU 1.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }else {
             JOptionPane.showMessageDialog(null, "¡Atención! No hay procesos para asignar al CPU 2.", "Aviso", JOptionPane.WARNING_MESSAGE);
