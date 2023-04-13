@@ -449,18 +449,30 @@ public class CPU {
     }
 
     public static void PARAM1(int v1) {
-        bpc.getPila().push(v1);
+        if (bpc.getPila().size() <10){
+            bpc.getPila().push(v1);
+        }    
     }
 
     public static void PARAM2(int v1, int v2) {
-        bpc.getPila().push(v1);
-        bpc.getPila().push(v2);
+        if (bpc.getPila().size() <10){
+            bpc.getPila().push(v1);
+        }
+        if (bpc.getPila().size() <10){        
+            bpc.getPila().push(v2);
+        }
     }
 
     public static void PARAM3(int v1, int v2, int v3) {
-        bpc.getPila().push(v1);
-        bpc.getPila().push(v2);
-        bpc.getPila().push(v3);
+        if (bpc.getPila().size() <10){
+            bpc.getPila().push(v1);
+        }
+        if (bpc.getPila().size() <10){        
+            bpc.getPila().push(v2);
+        }
+        if (bpc.getPila().size() <10){       
+            bpc.getPila().push(v3);
+        }
         System.out.println(bpc.getPila());
     }
 
