@@ -119,6 +119,8 @@ public class Reader {
     //Verifica que la sintaxis de las instrucciones del archivo sean validas 
     public static  boolean validateSyntax(String instruction) {
         instruction = instruction.toUpperCase();
+        instruction = instruction.replace(", ", " ");
+        instruction = instruction.replace(",", " ");
         String[] tokens = instruction.split("\\s+");
         
         // Validación de la sintaxis para cada instrucción 
@@ -148,18 +150,21 @@ public class Reader {
             || tokens[1].equals("09H") || tokens[1].equals("21H") )){
             return true;
         }else if (tokens.length == 2 && (tokens[0].equals("JMP") || tokens[0].equals("JE") || tokens[0].equals("JNE"))){
-            if (tokens[1].equals("-1") || tokens[1].equals("+1")){
+            int num = Integer.parseInt(tokens[1]);
+            if (num < 0 || num > 0){
                 return true;
             }
         }else if (tokens[0].equals("PARAM")){
             int largo = tokens.length;
-            System.out.println("Leyó el param y el largo es: " + largo);
+            System.out.println("Leyo el param y el largo es: " + largo);
             if((largo == 2||largo ==3||largo == 4)){
                 return true;
             }
         }else {
+            System.out.println("en el else, Instrucción mala: " + instruction);
             return false;
         }
+        System.out.println("en el return, Instrucción mala: " + instruction);
         return false;
     }
     

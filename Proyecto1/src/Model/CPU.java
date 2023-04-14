@@ -221,6 +221,8 @@ public class CPU {
         bpc.setTotalPeso(pesoTotal);
         Controller.actualizarRegistrosCPU(bpc, 1);
         instruccionActual ++;
+        bpc.setIndexAux(instruccionActual);
+        System.out.println(instruccionActual + " actual");
     }
 
     public static void mov_valor_a_destino(int valor, String destino) {
@@ -395,6 +397,7 @@ public class CPU {
 
     public static void INT_20H() {
         bpc.setIndexAux(bpc.getCodAsm().size());
+        finalizar();
     }
     
     public static void INT_10H() {
@@ -424,8 +427,10 @@ public class CPU {
     }
 
     public static void JMP(int desplazamiento) {
+        System.out.println(bpc.getIndexAux() + desplazamiento);
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0) {
             bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+            instruccionActual += desplazamiento - 1;
         } else {
             JOptionPane.showMessageDialog(null, "Error de desbordamiento");
         }
@@ -435,6 +440,7 @@ public class CPU {
     public static void JE(int desplazamiento) {
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0 && bpc.isCMP()) {
             bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+            instruccionActual += desplazamiento - 1;
         } else {
             System.out.println("error de desbordamiento o CMP false");
         }
@@ -443,6 +449,7 @@ public class CPU {
     public static void JNE(int desplazamiento) {
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0 && bpc.isCMP()) {
             bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+            instruccionActual += desplazamiento - 1;
         } else {
             System.out.println("error de desbordamiento o CMP false");
         }
