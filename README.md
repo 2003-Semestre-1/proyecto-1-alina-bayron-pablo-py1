@@ -7,4 +7,4 @@
 ### [2016248502] [Bonilla Espinoza Alina Tatiana]
 
 ### Estado del proyecto: 2
-### Enlace del video: (Si esto fue solicitado)
+### Enlace del video: https://youtu.be/V3eh-tJPMYU
