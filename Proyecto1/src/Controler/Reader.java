@@ -127,7 +127,7 @@ public class Reader {
         if (tokens.length == 3 && tokens[0].equals("MOV")){
             if (esRegistro(tokens[1]) && (esOperando(tokens[2]) || esRegistro(tokens[2]))) {
                 return true;
-            }else if (tokens[1].equals("AH,") && esRegistroAH(tokens[2])){
+            }else if (tokens[1].equals("AH") && esRegistroAH(tokens[2])){
                 return true;
             }       
             

@@ -3,7 +3,18 @@ package Model;
 import Controler.Controller;
 import Model.BPC;
 import static Model.CPU.bpc;
+import static Model.CPU.finalizar;
+import static Model.CPU.instruccionActual;
+import static Model.CPU.lineaActual;
+import static Model.CPU.nombreArchivo;
 import static Model.CPU.pesoTotal;
+import static Model.CPU.textoAEscribir;
+import static Model.CPU.textoLeido;
+import static Model.CPU.totalInstrucciones;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +43,9 @@ public class CPU2 {
     private static int BX;
     private static int CX;
     private static int DX;
+    static String nombreArchivo = "archivoCPU2.txt";
+    static String textoAEscribir = "Este es el texto a escribir en el archivo del cpu2.";
+    static String textoLeido = "";
     
     public CPU2(){
         setCpuOcupado(false);
@@ -89,25 +103,34 @@ public class CPU2 {
         String dir3 = "";
         int movValue = 0;
 
+        //System.out.println("Line: " + instruction + " " + dir + " " + movValue);
         switch (instruction) {
             case "LOAD":
                 pesoTotal += 2;
                 dir = comands[1];
                 load(dir);
                 break;
-                case "STORE":
+            case "STORE":
                 pesoTotal += 2;
                 dir = comands[1];
                 store(dir);
                 break;
             case "MOV":
+                System.out.println("Entro al MOV");
                 pesoTotal++;
                 if (comands.length > 2) {
                     dir = comands[1];
+                    System.out.println("dir: " + dir);
+                    System.out.println("largo de dir: " + dir.length());
                     if (comands[2].matches("[+-]?\\d*(\\.\\d+)?")) {
+                        System.out.println("se fue en el if");
                         movValue = Integer.parseInt(comands[2]);
                         mov_valor_a_destino(movValue, dir);
+                    }else if ("AH".equals(dir)){
+                        System.out.println("Entro al AH");
+                        bpc.setAH(comands[2]);
                     } else {
+                        System.out.println("se fue en el else");
                         dir2 = comands[2];
                         mov_destino_origen(dir, dir2);
                     }
@@ -158,6 +181,9 @@ public class CPU2 {
                 }
                 if (dir.equals("09H")) {
                     INT_09H();
+                }
+                if (dir.equals("21H")) {
+                    INT_21H(bpc.getAH());
                 }
                 //falta el 21h
                 break;
@@ -210,6 +236,7 @@ public class CPU2 {
                 dir = comands[1];
                 POP(dir);
                 break;
+            
         }
         if (totalInstrucciones <= instruccionActual){
             finalizar();
@@ -217,8 +244,11 @@ public class CPU2 {
         bpc.setTotalPeso(pesoTotal);
         Controller.actualizarRegistrosCPU(bpc, 2);
         instruccionActual ++;
+        bpc.setIndexAux(instruccionActual);
+        System.out.println(instruccionActual + " actual");
     }
-public static void mov_valor_a_destino(int valor, String destino) {
+
+    public static void mov_valor_a_destino(int valor, String destino) {
         switch (destino) {
             case "AX":
                 bpc.setAX(valor);
@@ -251,7 +281,7 @@ public static void mov_valor_a_destino(int valor, String destino) {
                 break;
         }
     }
-
+    
     public static void load(String x) {
         switch (x) {
             case "AX":
@@ -268,7 +298,6 @@ public static void mov_valor_a_destino(int valor, String destino) {
                 break;
         }
     }
-
     public static void add(String x) {
         switch (x) {
             case "AX":
@@ -390,6 +419,7 @@ public static void mov_valor_a_destino(int valor, String destino) {
 
     public static void INT_20H() {
         bpc.setIndexAux(bpc.getCodAsm().size());
+        finalizar();
     }
     
     public static void INT_10H() {
@@ -398,8 +428,69 @@ public static void mov_valor_a_destino(int valor, String destino) {
     }
 
     public static void INT_09H() {
-        System.out.println("en cpu 2 envia: " + bpc.getCPU());
         Controller.solicitarEntradaTexto(bpc.getCPU());
+    }
+    
+    public static void INT_21H(String comando) {
+        if ("3ch".equals(comando)){ // crear el archivo
+            try {
+            FileOutputStream archivoNuevo = new FileOutputStream(nombreArchivo);
+            archivoNuevo.close();
+            System.out.println("Archivo creado exitosamente.");
+            } catch (IOException e) {
+                System.out.println("Error al crear archivo.");
+            }
+        }
+        else if ("3dh".equals(comando)){ // abrir el archivo
+            try {
+                FileInputStream archivoExistente = new FileInputStream(nombreArchivo);
+                System.out.println("Archivo abierto exitosamente.");
+                int c;
+                while ((c = archivoExistente.read()) != -1) {
+                    textoLeido += (char) c;
+                }
+                archivoExistente.close();
+            } catch (IOException e) {
+                System.out.println("Error al abrir archivo.");
+            }
+        }
+        else if ("4dh".equals(comando)){ // leer el archivo
+            try {
+                FileInputStream archivoExistente = new FileInputStream(nombreArchivo);
+                System.out.println("Leyendo archivo...");
+                int c;
+                while ((c = archivoExistente.read()) != -1) {
+                    textoLeido += (char) c;
+                }
+                archivoExistente.close();
+                System.out.println("Texto leído: " + textoLeido);
+            } catch (IOException e) {
+                System.out.println("Error al leer archivo.");
+            }
+        }
+        else if ("40h".equals(comando)){ //escribir en el archivo
+            try {
+                FileOutputStream archivoExistente = new FileOutputStream(nombreArchivo);
+                byte[] bytesAEscribir = textoAEscribir.getBytes();
+                archivoExistente.write(bytesAEscribir);
+                archivoExistente.close();
+                System.out.println("Texto escrito exitosamente.");
+            } catch (IOException e) {
+                System.out.println("Error al escribir archivo.");
+            }
+        }
+        else if ("41h".equals(comando)){ // eliminar archivo
+            try {
+                File archivoAEliminar = new File(nombreArchivo);
+                if (archivoAEliminar.delete()) {
+                    System.out.println("Archivo eliminado exitosamente.");
+                } else {
+                    System.out.println("Error al eliminar archivo.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error al eliminar archivo.");
+            }
+        }
     }
     
     public static void recibirTextoINTH09(int num){
@@ -409,19 +500,28 @@ public static void mov_valor_a_destino(int valor, String destino) {
 
     public static boolean CMP(String registro1, String registro2) {
         boolean bandera = false;
-
+        System.out.println("r1: " + registro1 + "valor: " + get_valor_registro(registro1));
+        System.out.println("r2: " + registro2 + "valor: " + get_valor_registro(registro2));
+        
         if (get_valor_registro(registro1) == get_valor_registro(registro2)) {
+            System.out.println("si fue cierto");
             bandera = true;
+            bpc.setCMP(true);
+            
         } else {
+            System.out.println("no fue cierto");
             bandera = false;
+            bpc.setCMP(false);
         }
 
         return bandera;
     }
 
     public static void JMP(int desplazamiento) {
+        System.out.println(bpc.getIndexAux() + desplazamiento);
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0) {
             bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+            instruccionActual += desplazamiento - 1;
         } else {
             JOptionPane.showMessageDialog(null, "Error de desbordamiento");
         }
@@ -429,20 +529,30 @@ public static void mov_valor_a_destino(int valor, String destino) {
     }
 
     public static void JE(int desplazamiento) {
-        if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0 && bpc.isCMP()) {
-            bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+        if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0) {
+            if (bpc.isCMP()){
+                bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+                instruccionActual += desplazamiento - 1;
+            }else{
+                JOptionPane.showMessageDialog(null, "CMP falso, por lo que no salta");
+            }
+            
         } else {
-            JOptionPane.showMessageDialog(null, "Error de desbordamiento o CMP falso");
-            System.out.println("error de desbordamiento o CMP false");
+            JOptionPane.showMessageDialog(null, "Error de desbordamiento");
         }
     }
 
     public static void JNE(int desplazamiento) {
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0 && bpc.isCMP()) {
-            bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+            if (!bpc.isCMP()){
+                bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
+                instruccionActual += desplazamiento - 1;
+            }else{
+                JOptionPane.showMessageDialog(null, "CMP verdadero, por lo que no salta");
+            }
+            
         } else {
-            JOptionPane.showMessageDialog(null, "Error de desbordamiento o CMP falso");
-            System.out.println("error de desbordamiento o CMP false");
+            JOptionPane.showMessageDialog(null, "Error de desbordamiento");
         }
     }
 
@@ -533,5 +643,5 @@ public static void mov_valor_a_destino(int valor, String destino) {
         BX = 0;
         CX = 0;
         DX = 0;
-    } 
+    }  
 }

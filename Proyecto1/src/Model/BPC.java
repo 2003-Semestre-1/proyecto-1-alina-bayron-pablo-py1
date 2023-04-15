@@ -55,6 +55,8 @@ public class BPC {
     private ArrayList<String> codLineasAsm = new ArrayList<>();
     //linea actual
     private int linea = 0;
+    //para archivo
+    private String comando;
     
     public BPC(String nombre, ArrayList<String> linesAsm, int posicionMemoria) {
         codLineasAsm.clear();
@@ -224,6 +226,13 @@ public class BPC {
         return direccionInicio;
     }
     
+    public String getAH() {
+        return comando;
+    }
+
+    public void setAH(String ah) {
+        comando = ah;
+    }
 }
 
 
