@@ -67,9 +67,13 @@ public class Memory {
             BPC prueba = memoriaPrincipal.get(i);
             System.out.println("Nombre:" + prueba.getNombre());
         }
+        System.out.println("Nombre:" );
         if (pos < memoriaPrincipal.size()){
+            System.out.println("Entro al if:" );
             BPC bpc = memoriaPrincipal.get(pos);
+            System.out.println("pos: " + pos );
             pos++;
+            System.out.println("Nombre:" + bpc.getNombre());
             return bpc;
         }else if (posVirtual < memoriaVirtual.size()){
             BPC bpc = memoriaVirtual.get(posVirtual);
@@ -128,9 +132,11 @@ public class Memory {
         aumentarTamanioUnidad(objeto.getCodAsm().size(),1);
         System.out.println("Con la posiscion de memoria: " + objeto.getDireccionMemoria2());
         memoriaPrincipal.remove(objeto.getDireccionMemoria2());
+        pos--;
         if (!memoriaVirtual.isEmpty()){
             BPC bpc = memoriaVirtual.get(0);
             memoriaPrincipal.add(bpc);
+            memoriaVirtual.remove(0);
             aumentarTamanioUnidad(bpc.getCodAsm().size(),2);
             disminuirTamanioUnidad(bpc.getCodAsm().size(),1);
         }
