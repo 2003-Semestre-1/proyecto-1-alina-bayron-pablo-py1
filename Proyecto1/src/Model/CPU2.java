@@ -428,36 +428,36 @@ public class CPU2 {
             try {
             FileOutputStream archivoNuevo = new FileOutputStream(nombreArchivo);
             archivoNuevo.close();
-            System.out.println("Archivo creado exitosamente.");
+            JOptionPane.showMessageDialog(null, "Archivo creado exitosamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
-                System.out.println("Error al crear archivo.");
+                JOptionPane.showMessageDialog(null, "Error al crear archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else if ("3dh".equals(comando)){ // abrir el archivo
             try {
                 FileInputStream archivoExistente = new FileInputStream(nombreArchivo);
-                System.out.println("Archivo abierto exitosamente.");
+                JOptionPane.showMessageDialog(null, "Archivo abierto exitosamente.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                 int c;
                 while ((c = archivoExistente.read()) != -1) {
                     textoLeido += (char) c;
                 }
                 archivoExistente.close();
             } catch (IOException e) {
-                System.out.println("Error al abrir archivo.");
+                JOptionPane.showMessageDialog(null, "Error al abrir archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                
             }
         }
         else if ("4dh".equals(comando)){ // leer el archivo
             try {
                 FileInputStream archivoExistente = new FileInputStream(nombreArchivo);
-                System.out.println("Leyendo archivo...");
+                JOptionPane.showMessageDialog(null, "Leyendo archivo...", "Informacion", JOptionPane.INFORMATION_MESSAGE);                
                 int c;
                 while ((c = archivoExistente.read()) != -1) {
                     textoLeido += (char) c;
                 }
                 archivoExistente.close();
-                System.out.println("Texto leído: " + textoLeido);
+                JOptionPane.showMessageDialog(null, "Texto leído: " + textoLeido, "Informacion", JOptionPane.INFORMATION_MESSAGE);                
             } catch (IOException e) {
-                System.out.println("Error al leer archivo.");
+                JOptionPane.showMessageDialog(null, "Error al leer archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             }
         }
         else if ("40h".equals(comando)){ //escribir en el archivo
@@ -466,21 +466,21 @@ public class CPU2 {
                 byte[] bytesAEscribir = textoAEscribir.getBytes();
                 archivoExistente.write(bytesAEscribir);
                 archivoExistente.close();
-                System.out.println("Texto escrito exitosamente.");
+                JOptionPane.showMessageDialog(null, "Texto escrito exitosamente.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                
             } catch (IOException e) {
-                System.out.println("Error al escribir archivo.");
+                JOptionPane.showMessageDialog(null, "Error al escribir archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                
             }
         }
         else if ("41h".equals(comando)){ // eliminar archivo
             try {
                 File archivoAEliminar = new File(nombreArchivo);
                 if (archivoAEliminar.delete()) {
-                    System.out.println("Archivo eliminado exitosamente.");
+                    JOptionPane.showMessageDialog(null, "Archivo eliminado exitosamente.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                    
                 } else {
-                    System.out.println("Error al eliminar archivo.");
+                    JOptionPane.showMessageDialog(null, "Error al eliminar archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                    
                 }
             } catch (Exception e) {
-                System.out.println("Error al eliminar archivo.");
+                JOptionPane.showMessageDialog(null, "Error al eliminar archivo.", "Informacion", JOptionPane.INFORMATION_MESSAGE);                
             }
         }
     }
