@@ -41,8 +41,7 @@ public class Reader {
             posicionMemoria++;
         }
         waitingList.clear();
-        if (filesErrors.size() != 0){
-            System.out.println("Si hay archivos malos");
+        if (!filesErrors.isEmpty()){
             int x = 0;
             String mensaje = "Se detectaron archivos con algún error de sintaxis.\nLos siguientes archivos no se tomaran en cuenta: ";
             while (x< filesErrors.size()){
@@ -156,15 +155,12 @@ public class Reader {
             }
         }else if (tokens[0].equals("PARAM")){
             int largo = tokens.length;
-            System.out.println("Leyo el param y el largo es: " + largo);
             if((largo == 2||largo ==3||largo == 4)){
                 return true;
             }
         }else {
-            System.out.println("en el else, Instrucción mala: " + instruction);
             return false;
         }
-        System.out.println("en el return, Instrucción mala: " + instruction);
         return false;
     }
     

@@ -7,7 +7,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.KeyAdapter;
 import javax.swing.JOptionPane;
 
-
 import Controler.Controller;
 import Model.BPC;
 import java.awt.Color;

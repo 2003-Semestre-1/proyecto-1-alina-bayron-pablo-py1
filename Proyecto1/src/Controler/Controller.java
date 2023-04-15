@@ -56,7 +56,6 @@ public class Controller {
     public static void cargarBpcs(){
         hayProcesos=true;
         bpcActual = getNextBPC();
-        System.out.println(bpcActual == null);
         if (!CPU.cpuOcupado()){
             if (bpcActual != null){
                 CPU.cargarBCP(bpcActual);
@@ -65,6 +64,9 @@ public class Controller {
                 bpcActual.setEstado("Preparado");
                 marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU1, 0, 1 );
                 bpcActual = getNextBPC();
+                if (bpcActual != null){
+                    System.out.println(bpcActual.getNombre());
+                }
             }
         }
         if (!CPU2.cpuOcupado()){
@@ -75,23 +77,21 @@ public class Controller {
                 bpcActual.setEstado("Preparado");
                 marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU2, 0, 2 );
                 bpcActual = getNextBPC();
+                if (bpcActual != null){
+                    System.out.println(bpcActual.getNombre());
+                }
             }
         }
         Interface.esconderBtnConfiguracion();
     }
 
     public static void ejecutarSiguienteInstruccion(){
-        System.out.println("CP1: " + CPU.cpuOcupado());
-        System.out.println("CP2: " + CPU2.cpuOcupado());
-        System.out.println(bpcActual == null);
-
+        
         if (bpcActual == null && !CPU.cpuOcupado() && !CPU2.cpuOcupado() ){
-            System.out.println("Entro al 1 if");
             hayProcesos = false;
             Interface.noHayProcesos(3);
             
         }else{
-            System.out.println("Entro al 1 else");
             if (!CPU.cpuOcupado()){
                 if (bpcActual != null){
                     procesoNumeroCPU1 ++;
@@ -103,6 +103,9 @@ public class Controller {
                     marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU1, 0, 1);
                     marcarTiempoCPU("X", procesoNumeroCPU1, timeCPU1, 1);
                     bpcActual = getNextBPC();
+                    if (bpcActual != null){
+                        System.out.println(bpcActual.getNombre());
+                    }
                 }else{
                     if (!avisoCPU1 && !modoAutomatico){
                         avisoCPU1 = true;
@@ -127,7 +130,9 @@ public class Controller {
                     marcarTiempoCPU(bpcActual.getNombre(), procesoNumeroCPU2, 0, 2);
                     marcarTiempoCPU("X", procesoNumeroCPU2, timeCPU2, 2);
                     bpcActual = getNextBPC();
-                    
+                    if (bpcActual != null){
+                        System.out.println(bpcActual.getNombre());
+                    }
                 }else{
                     if (!avisoCPU2 && !modoAutomatico){
                         avisoCPU2 = true;
@@ -172,16 +177,15 @@ public class Controller {
   
     public static void newBPC(String nombre, ArrayList<String> linesAsm, int posicionMemoria){
         BPC bpc = new BPC(nombre,linesAsm,posicionMemoria);
+        System.out.println("Nombre del bcp creado: " + bpc.getNombre());
         Memory.guardarBPC(bpc);
     }
     
     public static BPC getNextBPC(){
         if (Memory.hayBcpPendientes()){
-            System.out.println("entro al if de getNextBpc");
             BPC bpc = Memory.getNetxBPC();
             return bpc;
         }else{
-            System.out.println("entro al else de getNextBpc");
             return null;
         }
     }
@@ -191,7 +195,6 @@ public class Controller {
     }
     
     public static void solicitarEntradaTexto(int CPU){
-        System.out.println("el cpu en controler es: " + CPU);
         Interface.entradaTexto(CPU, false, interrumpir);
         interrumpir = true;
         
@@ -223,7 +226,6 @@ public class Controller {
         Date d2 = null;
         ArrayList<BPC> bpcs = Memory.getListaBPCS();
         for(int i = 0; i<bpcs.size(); i++){
-            System.out.println(i);
         }
         String mensaje = "";
         if (bpcs.isEmpty()){
@@ -307,8 +309,6 @@ public class Controller {
         Memory.limpiar();
         Interface.eliminarDatosTablaTiempos();
         Interface.limpiarTablaProcesos();
-        CPU.finalizar();
-        CPU2.finalizar();
         Interface.limpiarDatosInterfaceCpu(2);
         Interface.limpiarDatosInterfaceCpu(1);
     }

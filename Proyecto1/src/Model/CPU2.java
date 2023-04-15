@@ -103,7 +103,6 @@ public class CPU2 {
         String dir3 = "";
         int movValue = 0;
 
-        //System.out.println("Line: " + instruction + " " + dir + " " + movValue);
         switch (instruction) {
             case "LOAD":
                 pesoTotal += 2;
@@ -116,21 +115,15 @@ public class CPU2 {
                 store(dir);
                 break;
             case "MOV":
-                System.out.println("Entro al MOV");
                 pesoTotal++;
                 if (comands.length > 2) {
                     dir = comands[1];
-                    System.out.println("dir: " + dir);
-                    System.out.println("largo de dir: " + dir.length());
                     if (comands[2].matches("[+-]?\\d*(\\.\\d+)?")) {
-                        System.out.println("se fue en el if");
                         movValue = Integer.parseInt(comands[2]);
                         mov_valor_a_destino(movValue, dir);
                     }else if ("AH".equals(dir)){
-                        System.out.println("Entro al AH");
                         bpc.setAH(comands[2]);
                     } else {
-                        System.out.println("se fue en el else");
                         dir2 = comands[2];
                         mov_destino_origen(dir, dir2);
                     }
@@ -245,7 +238,6 @@ public class CPU2 {
         Controller.actualizarRegistrosCPU(bpc, 2);
         instruccionActual ++;
         bpc.setIndexAux(instruccionActual);
-        System.out.println(instruccionActual + " actual");
     }
 
     public static void mov_valor_a_destino(int valor, String destino) {
@@ -500,16 +492,12 @@ public class CPU2 {
 
     public static boolean CMP(String registro1, String registro2) {
         boolean bandera = false;
-        System.out.println("r1: " + registro1 + "valor: " + get_valor_registro(registro1));
-        System.out.println("r2: " + registro2 + "valor: " + get_valor_registro(registro2));
         
         if (get_valor_registro(registro1) == get_valor_registro(registro2)) {
-            System.out.println("si fue cierto");
             bandera = true;
             bpc.setCMP(true);
             
         } else {
-            System.out.println("no fue cierto");
             bandera = false;
             bpc.setCMP(false);
         }
@@ -518,7 +506,6 @@ public class CPU2 {
     }
 
     public static void JMP(int desplazamiento) {
-        System.out.println(bpc.getIndexAux() + desplazamiento);
         if ((bpc.getIndexAux() + desplazamiento) < bpc.getCodAsm().size() && (bpc.getIndexAux() + desplazamiento) >= 0) {
             bpc.setIndexAux(bpc.getIndexAux() + desplazamiento);//5 + -1 = 4
             instruccionActual += desplazamiento - 1;
@@ -581,7 +568,6 @@ public class CPU2 {
         if (bpc.getPila().size() <10){       
             bpc.getPila().push(v3);
         }
-        System.out.println(bpc.getPila());
     }
 
     public static void PUSH(String registro) {

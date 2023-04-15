@@ -47,13 +47,11 @@ public class Memory {
             datosBpc.add(pBpc.getDireccionMemoria());
             datosBpc.add(pBpc.getCodAsm());
             if ((tamanioPrincipal - (0.808 + (tamanioCodASM / 1024.0) )) > 0 ){
-                System.out.println(pBpc.getNombre()+"se guardo en principal");
                 UnidadAlmacenamiento.add(datosBpc);
                 memoriaPrincipal.add(pBpc);
                 disminuirTamanioUnidad(tamanioCodASM, 1);
             }else{
                 UnidadAlmacenamiento.add(datosBpc);
-                System.out.println(pBpc.getNombre()+"se guardo en virtual");
                 memoriaVirtual.add(pBpc);
                 disminuirTamanioUnidad(tamanioCodASM, 2);
             }
@@ -64,6 +62,11 @@ public class Memory {
     }
     
     public static BPC getNetxBPC(){
+        System.out.println("Tamanio de la lista" + memoriaPrincipal.size());
+        for(int i = 0; i<memoriaPrincipal.size(); i++){
+            BPC prueba = memoriaPrincipal.get(i);
+            System.out.println("Nombre:" + prueba.getNombre());
+        }
         if (pos < memoriaPrincipal.size()){
             BPC bpc = memoriaPrincipal.get(pos);
             pos++;
@@ -84,22 +87,6 @@ public class Memory {
     }
     
     public static ArrayList getListaBPCS(){
-        /*ArrayList<BPC> listBpc = new ArrayList();
-        System.out.println("1- Numero bcp = " + listBpc.size());
-        if (memoriaVirtual.isEmpty()) {
-            return memoriaPrincipal ;
-        }else{
-            System.out.println("2 - Numero de archivos en principal = " + memoriaPrincipal.size());
-            System.out.println("3 - Numero de archivos en virtual = " + memoriaVirtual.size()); 
-            listBpc = memoriaPrincipal;
-            System.out.println("4- Numero bcp = " + listBpc.size());
-                       
-            for(int i = 0; i<memoriaVirtual.size(); i++){
-                listBpc.add(memoriaVirtual.get(i));
-            }
-            System.out.println("5- Numero bpc luego del for = " + listBpc.size());
-            return listBpc;
-        }*/
         return colaEspera;
         
     }
@@ -137,13 +124,20 @@ public class Memory {
     }
     
     public static void eliminarBPC (BPC objeto){
+        System.out.println("A eliminar llega " + objeto.getNombre());
         aumentarTamanioUnidad(objeto.getCodAsm().size(),1);
+        System.out.println("Con la posiscion de memoria: " + objeto.getDireccionMemoria2());
         memoriaPrincipal.remove(objeto.getDireccionMemoria2());
         if (!memoriaVirtual.isEmpty()){
             BPC bpc = memoriaVirtual.get(0);
             memoriaPrincipal.add(bpc);
             aumentarTamanioUnidad(bpc.getCodAsm().size(),2);
             disminuirTamanioUnidad(bpc.getCodAsm().size(),1);
+        }
+        System.out.println("Tamanio de la lista" + memoriaPrincipal.size());
+        for(int i = 0; i<memoriaPrincipal.size(); i++){
+            BPC prueba = memoriaPrincipal.get(i);
+            System.out.println("Nombre:" + prueba.getNombre());
         }
     }
 }
